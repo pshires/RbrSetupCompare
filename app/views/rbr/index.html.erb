@@ -1,0 +1,96 @@
+<h1 class="my-4 text-center">Add Setup Files for Comparison</h1>
+
+<div class="container">
+  <div class="alert alert-info text-center">
+    RBR Setup files can be found in <code>SavedGames</code> under your base game directory. Example: <strong>RichardBurnsRally/SavedGames/</strong>
+  </div>
+
+  <%= form_with url: compare_path, local: true, html: { multipart: true, id: "upload-form" } do %>
+    <% if flash[:error] %>
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <%= flash[:error] %>
+      </div>
+    <% end %>
+
+    <div id="file-upload-container" class="mb-4"></div>
+
+    <div class="d-grid gap-3 mb-4 text-center">
+      <button type="button" id="add-file-button" class="btn btn-md btn-outline-primary fw-bold">
+        + Add Another Setup File
+      </button>
+
+      <%= submit_tag "Compare Setups", class: "btn btn-success btn-lg fw-bold" %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+    let fileIndex = 0;
+
+    function setupDropzone(dropzoneId, inputId) {
+        const dropzone = document.getElementById(dropzoneId);
+        const fileInput = document.getElementById(inputId);
+
+        const defaultText = dropzone.getAttribute('data-default-text');
+
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        function updateDropzoneText() {
+            if (fileInput.files.length > 0) {
+                dropzone.textContent = `Selected: ${fileInput.files[0].name}`;
+            } else {
+                dropzone.textContent = defaultText;
+            }
+        }
+
+        fileInput.addEventListener('change', updateDropzoneText);
+
+        dropzone.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+
+        dropzone.addEventListener('dragleave', function () {
+            dropzone.classList.remove('dragover');
+        });
+
+        dropzone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateDropzoneText();
+            }
+        });
+
+        updateDropzoneText();
+    }
+
+    function addFileInput() {
+        const container = document.getElementById('file-upload-container');
+        fileIndex += 1;
+
+        const block = document.createElement('div');
+        block.classList.add('file-upload-block');
+
+        const dropzoneId = `dropzone${fileIndex}`;
+        const inputId = `file-input-${fileIndex}`;
+
+        block.innerHTML = `
+    <div class="dropzone" id="${dropzoneId}" data-default-text="Drag & Drop (or Click) to Upload Setup ${fileIndex}"></div>
+    <input type="file" name="files[]" id="${inputId}" style="display: none;" />
+  `;
+
+        container.appendChild(block);
+        setupDropzone(dropzoneId, inputId);
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        addFileInput();
+        addFileInput();
+        document.getElementById('add-file-button').addEventListener('click', addFileInput);
+    });
+</script>

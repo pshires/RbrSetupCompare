@@ -1,0 +1,105 @@
+<h1 class="my-4 text-center">RBR NGP Setup Comparison</h1>
+
+<% if @warnings.size > 0 %>
+  <div class="container mb-4">
+    <details open class="border p-3 rounded bg-light">
+      <summary class="fw-bold alert-orange mb-2">
+        ⚠ Warnings (<%= @warnings.size %>)
+      </summary>
+      <h6> Occasionally the input files have some inconsistencies. There may be no actual problems with the overall comparison, check the results to find out.</h6>
+      <% @warnings.each do |warning| %>
+        <div class="alert alert-warning alert-dismissible fade show mb-2" role="alert">
+          <%= warning %>
+        </div>
+      <% end %>
+    </details>
+  </div>
+<% end %>
+
+<div class="container text-center mb-3">
+  <a href="<%= root_path %>" class="btn btn-outline-secondary fw-bold fs-5">
+    Back to Setup File Input
+  </a>
+</div>
+
+<div class="container">
+  <div class="alert alert-info text-center">
+    Click on a section to expand or collapse. <strong><code>N/A</code></strong> means that the value was not provided in the setup file.
+    Try hiding matching values to reduce clutter.
+  </div>
+</div>
+
+<div class="container text-center mb-4">
+  <div class="d-inline-flex justify-content-center align-items-center gap-4">
+    <div class="form-check form-switch d-inline-flex align-items-center gap-2">
+      <input class="form-check-input" type="checkbox" id="toggleExpand">
+      <label class="form-check-label mb-0" for="toggleExpand">
+        <strong>Expand All Sections</strong>
+      </label>
+    </div>
+
+    <div class="form-check form-switch d-inline-flex align-items-center gap-2">
+      <input class="form-check-input" type="checkbox" id="hideMatches">
+      <label class="form-check-label mb-0" for="hideMatches">
+        <strong>Hide Matching Values</strong>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row gx-4 gy-4">
+    <% setups.each_with_index do |setup, index| %>
+      <div class="col setup">
+        <h4>Setup <%= index + 1 %></h4>
+        <h5><%= setup.delete(:filename) %></h5>
+
+        <% setup.each do |section_name, section_values| %>
+          <details data-section-name="<%= section_name %>">
+            <summary><%= section_name %></summary>
+            <table class="table table-bordered table-sm">
+              <tbody>
+              <% section_values.each do |key, value| %>
+                <% different = differences[section_name + key] %>
+                <tr class="<%= different ? 'diff' : 'match' %>">
+                  <td><%= key %></td>
+                  <td><%= value %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </details>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("details").forEach(detail => {
+            detail.addEventListener("toggle", () => {
+                const sectionName = detail.dataset.sectionName;
+                document.querySelectorAll(`details[data-section-name="${sectionName}"]`).forEach(other => {
+                    other.open = detail.open;
+                });
+            });
+        });
+
+        const checkbox = document.getElementById("hideMatches");
+        checkbox.addEventListener("change", () => {
+            const showMatching = !checkbox.checked;
+            document.querySelectorAll("tr.match").forEach(row => {
+                row.style.display = showMatching ? "" : "none";
+            });
+        });
+
+        const toggleExpand = document.getElementById("toggleExpand");
+        toggleExpand.addEventListener("change", () => {
+            const expand = toggleExpand.checked;
+            document.querySelectorAll("details").forEach(detail => {
+                detail.open = expand;
+            });
+        });
+    });
+</script>

@@ -1,0 +1,52 @@
+details summary {
+    font-size: 1.15rem;
+    font-weight: 600;
+    padding: 0.5rem;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 0.3rem;
+    cursor: pointer;
+}
+
+details summary:hover {
+    background-color: #e9ecef;
+}
+
+.alert-orange {
+    background-color: #ffa500;
+    color: #000;
+    border-color: #ff8c00;
+}
+
+.setup {
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+.diff td {
+    background-color: #ffe4e1 !important;
+}
+
+ .dropzone {
+     border: 3px dashed #ccc;
+     padding: 60px;
+     text-align: center;
+     background-color: #f8f9fa;
+     cursor: pointer;
+     transition: background-color 0.3s ease;
+     border-radius: 0.5rem;
+     font-weight: 500;
+     font-size: 1.3rem;
+ }
+
+.dropzone.dragover {
+    background-color: #e2e6ea;
+    border-color: #007bff;
+}
+
+.file-upload-block {
+    margin-bottom: 2rem;
+}
+
