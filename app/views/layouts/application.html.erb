@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title><%= "RbrSetupCompare" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title><%= content_for?(:title) ? yield(:title) : "RBR Setup Compare" %></title>
+    <meta name="description" content="Compare Richard Burns Rally setups side-by-side with visual diffs.">
+
+    <meta property="og:title" content="RBR Setup Compare" />
+    <meta property="og:description" content="Compare Richard Burns Rally setups side-by-side with visual diffs." />
+    <meta property="og:image" content="<%= image_url('beepo.png') %>" />
+    <meta property="og:url" content="https://rbrsetupcompare.onrender.com" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="RBR Setup Compare" />
+    <meta name="twitter:description" content="Compare Richard Burns Rally setups side-by-side with visual diffs." />
+    <meta name="twitter:image" content="<%= image_url('beepo.png') %>" />
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
