@@ -50,12 +50,13 @@
   </div>
 </div>
 
-<div class="container">
+<% container_class = setups.size >= 4 ? "container-fluid px-3 px-md-4" : "container" %>
+<div class="<%= container_class %>">
   <div class="row gx-4 gy-4">
     <% setups.each_with_index do |setup, index| %>
       <div class="col setup">
         <div class="sticky-top sticky-header border-bottom py-2">
-          <h4><%= setup.delete(:filename) %></h4>
+          <h6 class="sticky-header-filename"><%= setup.delete(:filename) %></h6>
         </div>
 
         <% setup.each do |section_name, section_values| %>

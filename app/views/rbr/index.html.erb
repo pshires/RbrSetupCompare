@@ -16,7 +16,7 @@
 
     <div class="d-grid gap-3 mb-4 text-center">
       <button type="button" id="add-file-button" class="btn btn-md btn-outline-primary fw-bold">
-        + Add Another Setup File
+        + Add Another Setup File (or drag & drop)
       </button>
 
       <%= submit_tag "Compare Setups", class: "btn btn-success btn-lg fw-bold" %>
@@ -25,72 +25,102 @@
 </div>
 
 <script>
-    let fileIndex = 0;
+    document.addEventListener("DOMContentLoaded", () => {
+        let fileIndex = 0;
+        const container = document.getElementById('file-upload-container');
+        const addFileButton = document.getElementById('add-file-button');
 
-    function setupDropzone(dropzoneId, inputId) {
-        const dropzone = document.getElementById(dropzoneId);
-        const fileInput = document.getElementById(inputId);
+        function setupDropzone(dropzoneId, inputId) {
+            const dropzone = document.getElementById(dropzoneId);
+            const fileInput = document.getElementById(inputId);
+            const defaultText = dropzone.getAttribute('data-default-text');
 
-        const defaultText = dropzone.getAttribute('data-default-text');
-
-        dropzone.addEventListener('click', () => fileInput.click());
-
-        function updateDropzoneText() {
-            if (fileInput.files.length > 0) {
-                dropzone.textContent = `Selected: ${fileInput.files[0].name}`;
-            } else {
-                dropzone.textContent = defaultText;
+            function updateDropzoneText() {
+                dropzone.textContent = fileInput.files.length > 0
+                  ? `Selected: ${fileInput.files[0].name}`
+                  : defaultText;
             }
+
+            dropzone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', updateDropzoneText);
+
+            dropzone.addEventListener('dragover', e => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
+
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('dragover');
+            });
+
+            dropzone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    updateDropzoneText();
+                }
+            });
+
+            updateDropzoneText();
         }
 
-        fileInput.addEventListener('change', updateDropzoneText);
+        function createFileInputBlock() {
+            fileIndex++;
+            const dropzoneId = `dropzone${fileIndex}`;
+            const inputId = `file-input-${fileIndex}`;
 
-        dropzone.addEventListener('dragover', function (e) {
+            const block = document.createElement('div');
+            block.classList.add('file-upload-block');
+            block.innerHTML = `
+        <div class="dropzone" id="${dropzoneId}" data-default-text="Drag & Drop (or Click) to Upload Setup ${fileIndex}"></div>
+        <input type="file" name="files[]" id="${inputId}" style="display: none;" />
+      `;
+
+            container.appendChild(block);
+            setupDropzone(dropzoneId, inputId);
+            return { dropzoneId, inputId };
+        }
+
+        function addFileInput() {
+            createFileInputBlock();
+        }
+
+        function addFileInputWithFile(file) {
+            const { inputId, dropzoneId } = createFileInputBlock();
+
+            const fileInput = document.getElementById(inputId);
+            const dropzone = document.getElementById(dropzoneId);
+
+            // Use DataTransfer to set the file programmatically
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+
+            dropzone.textContent = `Selected: ${file.name}`;
+        }
+
+        addFileInput();
+        addFileInput();
+        addFileButton.addEventListener('click', addFileInput);
+
+        addFileButton.addEventListener('dragover', e => {
             e.preventDefault();
-            dropzone.classList.add('dragover');
+            addFileButton.classList.add('dragover');
         });
 
-        dropzone.addEventListener('dragleave', function () {
-            dropzone.classList.remove('dragover');
+        addFileButton.addEventListener('dragleave', () => {
+            addFileButton.classList.remove('dragover');
         });
 
-        dropzone.addEventListener('drop', function (e) {
+        addFileButton.addEventListener('drop', e => {
             e.preventDefault();
-            dropzone.classList.remove('dragover');
-
+            addFileButton.classList.remove('dragover');
             const files = e.dataTransfer.files;
             if (files.length > 0) {
-                fileInput.files = files;
-                updateDropzoneText();
+                addFileInputWithFile(files[0]);
             }
         });
-
-        updateDropzoneText();
-    }
-
-    function addFileInput() {
-        const container = document.getElementById('file-upload-container');
-        fileIndex += 1;
-
-        const block = document.createElement('div');
-        block.classList.add('file-upload-block');
-
-        const dropzoneId = `dropzone${fileIndex}`;
-        const inputId = `file-input-${fileIndex}`;
-
-        block.innerHTML = `
-    <div class="dropzone" id="${dropzoneId}" data-default-text="Drag & Drop (or Click) to Upload Setup ${fileIndex}"></div>
-    <input type="file" name="files[]" id="${inputId}" style="display: none;" />
-  `;
-
-        container.appendChild(block);
-        setupDropzone(dropzoneId, inputId);
-    }
-
-
-    document.addEventListener("DOMContentLoaded", function () {
-        addFileInput();
-        addFileInput();
-        document.getElementById('add-file-button').addEventListener('click', addFileInput);
     });
 </script>
