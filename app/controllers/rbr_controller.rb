@@ -2,6 +2,8 @@ class RbrController < ApplicationController
   include ActionView::Helpers::UrlHelper
   include Rails.application.routes.url_helpers
 
+  # TODO- make the 83_d_tarmac.lsp / filename show at the top as you scroll down, so you always know which is which
+
   TOLERANCE = 0.0001
   def index
   end
@@ -109,6 +111,8 @@ class RbrController < ApplicationController
       "#{clean_number(value, modifier: 1.0/1000)} kPa"
     elsif key.include? 'Torque'
       "#{clean_number(value, modifier: 1)} Nm"
+    elsif key == 'BumpHighSpeedBreak'
+      "#{clean_number(value, modifier: 1)} m/s"
     else
       "#{clean_number(value)}"
     end

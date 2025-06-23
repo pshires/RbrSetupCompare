@@ -6,7 +6,10 @@
       <summary class="fw-bold alert-orange mb-2">
         ⚠ Warnings (<%= @warnings.size %>)
       </summary>
-      <h6> Occasionally the input files have some inconsistencies. There may be no actual problems with the overall comparison, check the results to find out.</h6>
+      <h6> The file parsing may have succeeded regardless of this warning, however, occasionally the setup files have
+        inconsistencies (stray words, etc). If it was not successful, you might be able to fix the setup file via
+        searching for the error term and removing the problem yourself. Or simply try a different setup file.
+      </h6>
       <% @warnings.each do |warning| %>
         <div class="alert alert-warning alert-dismissible fade show mb-2" role="alert">
           <%= warning %>
@@ -51,8 +54,9 @@
   <div class="row gx-4 gy-4">
     <% setups.each_with_index do |setup, index| %>
       <div class="col setup">
-        <h4>Setup <%= index + 1 %></h4>
-        <h5><%= setup.delete(:filename) %></h5>
+        <div class="sticky-top sticky-header border-bottom py-2">
+          <h4><%= setup.delete(:filename) %></h4>
+        </div>
 
         <% setup.each do |section_name, section_values| %>
           <details data-section-name="<%= section_name %>">
@@ -77,6 +81,11 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        const hideMatchesCheckbox = document.getElementById("hideMatches");
+        const toggleExpandCheckbox = document.getElementById("toggleExpand");
+        hideMatchesCheckbox.checked = false;
+        toggleExpandCheckbox.checked = false;
+
         document.querySelectorAll("details").forEach(detail => {
             detail.addEventListener("toggle", () => {
                 const sectionName = detail.dataset.sectionName;
