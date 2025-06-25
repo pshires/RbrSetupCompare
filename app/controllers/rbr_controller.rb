@@ -2,8 +2,6 @@ class RbrController < ApplicationController
   include ActionView::Helpers::UrlHelper
   include Rails.application.routes.url_helpers
 
-  # TODO- make the 83_d_tarmac.lsp / filename show at the top as you scroll down, so you always know which is which
-
   TOLERANCE = 0.0001
   def index
   end
